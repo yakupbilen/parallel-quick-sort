@@ -49,21 +49,7 @@ void quickSort(int arr[], int low, int high)
 void divide_array(int *array,int len,int tsay,int info[],int len_info)
 {
 	/*
-		Gönderilen diziyi thread sayýsý kadar böler ve sýralar.
-		Pivot rastgele seçiliyor. Fakat þöyle bir sorun var rand fonksiyonu [0,32767] arasýnda deðer üretiyor. 
-		Ben her ne kadar (rand()/RAND_MAX)*1.000.000 yapmýþ olsamda buradan çýkacak farklý sonuç sayýsý 1.000.000 adet deðil, hala 32767 adet oluyor.
-		Yani bu rastgelelik uniform olmayan, bizim istemedðimiz bir rastgelelik oluyor.
-		Bunu çözmenin bir yolunu bulamadým.Ýnternette farklý rastgele sayý fonksiyonu buldum fakat koduma implemente edemedim.
-		Pivotun rastgele seçilmesini kaldýrmak için 88. ve 112. kod satýrlarýný silebilirsiniz.
-		Sýnýr deðerleri info adlý dizi içerisinde tutuluyor.
-		Örneðin : 100 elemanlý bir dizi ve 4 threadimiz var.
-		Diziyi 2ye bölüyor.Pivot olarak rastgele bir eleman alýp bunu dizi içerisinde kendinden küçük olanlarý sola alýcak þekilde konumlandýrýyor(44).
-		Bu aþamadan sonra elimizde 2 parça var bunlar [0-43],[45,99]. Parametreler güncelleniyor(info,len_info).Method parametrelerini güncellenmiþ haliyle tekrar çaðrýlýyor.
-		info dizisinin içeriði þu þekilde: [-1,44,-1,-1,-1] , len_info=1
-		2.çaðýrmada 2 parça olan dizimizin her bir parçasý 2 parçaya ayrýlýyor.
-		infonun güncellenmiþ içeriði : [-1,13,44,76,-1]->[0,12],[14,43],[45,75],[77,99],len_info = 3
-		Eðer 8 adet threadimiz olsaydý bu iterasyon bir kere daha gerçekleþecekti.
-		infonun güncellenmiþ içeriði : [-1,8,13,15,44,55,76,88,-1]->[0,7],[9,12]....  ,len_info = 7
+		It divides and sorts the sent thread according to the number of threads.
 		
 	*/
 	
@@ -113,11 +99,11 @@ void test(int array[],int len)
 	{
 		if(array[i]>array[i+1])
 		{
-			printf("\n%d. ile %d. arasinda siralama hatasi\n X%d<%dX\n",i,i+1,array[i],array[i+1]);
+			printf("\nBetween %d. and %d. ERROR!\n X%d<%dX\n",i,i+1,array[i],array[i+1]);
 			return;
 		}
 	}
-	printf("\nDogru siralama\n");
+	printf("\nTest Passed.\n");
 }
 
 int main()
@@ -127,7 +113,7 @@ int main()
    	int tsay,n,i,j;
    	double start;
    	
-	ptr = fopen("girdi.txt","r");
+	ptr = fopen("input.txt","r");
 	if(ptr == NULL)
    	{
       	printf("Error!");   
@@ -141,7 +127,7 @@ int main()
 
    	if(tsay>32 || n>1000000)
    	{
-   		printf("Girdi dosyasýndaki ilk satirin(thread sayisi) maksimum degeri 32, ikinci satirin(ornek sayisi) maksimum degeri 1000000dur!!");
+   		printf("The maximum value of the first line (number of threads) in the input file is 32, and the maximum value of the second line (number of samples) is 1000000!!");
    		return -1;
   	}
 
@@ -162,22 +148,22 @@ int main()
 	#pragma omp parallel num_threads(tsay)
 	{
 		/*
-			Güncellenen partition_info dizisi ile her thread 1 parçayý sýralýyor.		
+			With the updated partition info array, each thread sort 1 partition.		
 		*/
 		int tid = omp_get_thread_num();
 		quickSort(array,partition_info[tid]+1,partition_info[tid+1]-1);
 	}
 
-	printf("\n%f saniye\n",omp_get_wtime()-start);
+	printf("\n%f seconds\n",omp_get_wtime()-start);
 	test(array,n);
 	printf("\n**************Partition Boundaries *************");
 	printArray(partition_info,tsay+1);
 	
 
-	ptr = fopen("cikti.txt","w");
+	ptr = fopen("output.txt","w");
 	if(ptr == NULL)
    	{
-      	printf("Cikti.txt dosyasi acilamadi!!");   
+      	printf("Could not open output.txt file!!");   
 	 	return -1;    
    	}
 	fprintf(ptr,"%d\n",tsay);

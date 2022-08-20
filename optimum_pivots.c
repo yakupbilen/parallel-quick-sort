@@ -6,8 +6,8 @@
 #define N 100
 #define B 100
 /*
-	Uygulamanýn bu versiyonunda programýn çalýþma süresini azaltmak için pivot deðerler daha optimum biçimde seçilmiþtir.
-	Rastgele sayýlarýn normal daðýldýðý senaryoda iþe yarayacaðýný düþünüyorum.
+	In this version of the application, the pivot values ??have been chosen more optimally to reduce the running time of the program.
+	I think this version works well in the scenario where the numbers are random.
 */
 void swap(int *a,int *b)
 {
@@ -117,11 +117,11 @@ void test(int array[],int len)
 	{
 		if(array[i]>array[i+1])
 		{
-			printf("\n%d,%d,Siralama hatasi %d>%d\n",i,i+1,array[i],array[i+1]);
+			printf("\n%d,%d,Sorting ERROR %d>%d\n",i,i+1,array[i],array[i+1]);
 			return;
 		}
 	}
-	printf("\nDogru siralama\n");
+	printf("\nTest Passed.\n");
 }
 
 int main()
@@ -131,7 +131,7 @@ int main()
    	int tsay,n,i,j,max=0;
    	double start;
    	
-	ptr = fopen("girdi.txt","r");
+	ptr = fopen("input.txt","r");
 	if(ptr == NULL)
    	{
       printf("Error!");   
@@ -153,7 +153,7 @@ int main()
 	
    	if(tsay>32 || n>1000000)
    	{
-   		printf("Girdi dosyasýndaki ilk satirin(thread sayisi) maksimum degeri 32, ikinci satirin(ornek sayisi) maksimum degeri 1000000dur!!");
+   		printf("The maximum value of the first line (number of threads) in the input file is 32, and the maximum value of the second line (number of samples) is 1000000!!");
    		return -1;
   	}
 
@@ -171,15 +171,15 @@ int main()
 		quickSort(array,partition_info[tid]+1,partition_info[tid+1]);
 	}
 	
-	printf("\n%f saniye\n",omp_get_wtime()-start);
+	printf("\n%f seconds\n",omp_get_wtime()-start);
 	test(array,n);
 	printf("\n**************Partition Boundaries *************");
 	printArray(partition_info,tsay+1);
-	ptr = fopen("cikti.txt","w");
+	ptr = fopen("output.txt","w");
 
 	if(ptr == NULL)
    	{
-      	printf("Cikti.txt dosyasi acilamadi!!");   
+      	printf("Could not open output.txt file!!");   
 	  	return -1;    
    	}
 	fprintf(ptr,"%d\n",tsay);
