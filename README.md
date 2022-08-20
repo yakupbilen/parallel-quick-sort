@@ -1,4 +1,4 @@
-## Parallel Quick Sort Implementation with C
+## Parallel Quick Sort Implementation
 
 ##### The OpenMP library was used.
 
